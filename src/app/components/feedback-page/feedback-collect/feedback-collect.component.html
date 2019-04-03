@@ -1,0 +1,12 @@
+<div class="form">
+  <div style="text-align:center">
+    <h1>
+      {{formName}}
+    </h1>
+  </div>
+  <app-dynamic-form [fields]="fieldArray" (submit)="submit($event)">
+  </app-dynamic-form>
+  <div class="margin-top">
+    {{ form.value | json }}
+  </div>
+</div>

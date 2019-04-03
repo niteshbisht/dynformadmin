@@ -1,0 +1,100 @@
+<div class="container-fluid">
+  <div class="containerparent row">
+    <div class="containerRowRight col-md-4 col-sm-4 col-lg-4">
+      <ng-template [ngIf]="regConfig.length>0">
+        <app-dynamic-form [fields]="regConfig" (submit)="submit($event)">
+        </app-dynamic-form>
+      </ng-template>
+    </div>
+    <div class="containerRowRight col-md-4 col-sm-4 col-lg-4">
+      <pre *ngIf="configData.data.length>0">{{configData | json}}</pre>
+    </div>
+    <div class="containerRow col-md-4 col-sm-4 col-lg-4">
+      <div>
+        <div>
+          <label for="seltarget">
+            Select Control
+          </label>
+          <select (change)="loadModel($event.target.value)" name="seltarget" class="form-control">
+            <option selected>None</option>
+            <option *ngFor="let opt of sampleForEdit.data" [value]="opt.name">
+              {{opt.name}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <br/>
+      <form class="appcontainer">
+        <div class="form-group">
+          <label for="component">Select Component</label>&nbsp;
+          <select id="component" name="component" class="form-control"
+            (change)="componentFieldChanged($event.target.value)" [ngModel]="model.type">
+            <option [selected]="model.type==''">None</option>
+            <option *ngFor="let opt of availableComponents" [value]="opt">{{opt}}</option>
+          </select>
+        </div>
+        <ng-template [ngIf]="model.type!='' && model.type!='None'">
+          <div class="form-group" *ngIf="model.type!='button'">
+            <label for="name">
+              Name&nbsp;
+            </label>
+            <input type="text" id="name" name="name" [(ngModel)]="model.name" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="label">
+              Label&nbsp;
+            </label>
+            <input type="text" name="label" class="form-control" [(ngModel)]="model.label">
+          </div>
+          <div class="form-group" *ngIf="model.type!='button'">
+            <label for="value">
+              Value&nbsp;
+            </label>
+            <input type="text" name="value" [(ngModel)]="model.value" class="form-control">
+          </div>
+          <div class="form-group" *ngIf="model.type!='button'">
+            <label for="isreq">Is Field Required? &nbsp;</label>
+            <input type="checkbox" name="isreq" [(ngModel)]="model.isRequired" class="form-control">
+          </div>
+        </ng-template>
+        <div [ngSwitch]="this.model.type">
+          <div *ngSwitchCase="'input'">
+            <div class="form-group">
+              <label for="inputtype">Select Input Type &nbsp;</label>
+              <select name="inputtype" (change)="changeField($event.target.value,'inputType')" class="form-control"
+                [ngModel]="model.inputType">
+                <option selected="'true'">None</option>
+                <option *ngFor="let opt of inputTypes.input">
+                  {{opt}}
+                </option>
+              </select>
+            </div>
+            <div *ngIf="model.inputType=='text'" class="form-group">
+              <label for="textonly">
+                Is Text Only?&nbsp;
+              </label>
+              <input type="checkbox" [(ngModel)]="model.isTextOnly" name="textonly" class="form-control">
+            </div>
+          </div>
+          <div
+            *ngSwitchCase="(this.model.type ==='radiobutton'|| this.model.type === 'checkbox'||this.model.type === 'select')?this.model.type:''">
+            <ng-template ngFor let-opt [ngForOf]="model.options" let-i="index">
+              <label for="{{i}}">{{i}}</label> &nbsp;
+              <input type="text" name="{{i}}" [ngModel]="opt" (change)="updateOptionValue($event.target.value,i)" class="form-control">
+              &nbsp; <span class="oi oi-plus" *ngIf="(i==model.options.length-1); else negativeBlock;"
+                (click)="updateOption(i,'plus')"></span>
+              <ng-template #negativeBlock> <span class="oi oi-minus" (click)="updateOption(i, 'negative')"></span>
+              </ng-template><br />
+            </ng-template>
+          </div>
+        </div>
+      </form>
+      <div>
+        <button class="btn btn-secondary" (click)="insertModelInConfig()">Add</button>
+      </div>
+      <div>
+        <button class="btn btn-primary" (click)="insertFormConfig()">Submit Form Config</button>
+      </div>
+    </div>
+  </div>
+</div>
